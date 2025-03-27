@@ -1,0 +1,14 @@
+USE StudentTestDB;
+
+-- 1. Wording and coefficient (expressed as a percentage) of each subject (3 points)
+SELECT 
+    wording,
+    CONCAT(ROUND(coef * 100, 2), '%') AS coefficient_percentage
+FROM 
+    Matter;
+
+-- 2. Sum of coefficients of all subjects (3 points)
+SELECT 
+    ROUND(SUM(coef),2) AS total_coefficients
+FROM 
+    Matter;
