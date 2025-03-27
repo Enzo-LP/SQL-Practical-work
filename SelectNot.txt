@@ -1,0 +1,74 @@
+USE StudentTestDB;
+
+-- 1. Total number of tests (1 point)
+SELECT COUNT(*) AS total_tests FROM Test;
+
+-- 2. List of scores with student names (1 point)
+SELECT n.score, s.name, s.firstname 
+FROM Notation n
+JOIN Student s ON n.numstud = s.numstud;
+
+-- 3. List of scores with student names and matter wording (1 point)
+SELECT n.score, s.name, s.firstname, m.wording
+FROM Notation n
+JOIN Student s ON n.numstud = s.numstud
+JOIN Test t ON n.numtest = t.numtest
+JOIN Matter m ON t.codemat = m.codemat;
+
+-- 4. List of scores ≥ 10 (1 point)
+SELECT n.score, s.name, s.firstname
+FROM Notation n
+JOIN Student s ON n.numstud = s.numstud
+WHERE n.score >= 10;
+
+-- 5. Students who obtained at least one score of 20 (1 point)
+SELECT DISTINCT s.name, s.firstname
+FROM Notation n
+JOIN Student s ON n.numstud = s.numstud
+WHERE n.score = 20;
+
+-- 6. Average scores for each student (1 point)
+SELECT s.name, s.firstname, ROUND(AVG(n.score),3) AS average_score
+FROM Notation n
+JOIN Student s ON n.numstud = s.numstud
+GROUP BY s.numstud, s.name, s.firstname;
+
+-- 7. Tests between January 1 and June 30, 2014 (1 point)
+SELECT * FROM Test
+WHERE testdate BETWEEN '2014-01-01' AND '2014-06-30';
+
+-- 8. Tests with matter information (1 point)
+SELECT t.numtest, t.testdate, t.place, m.wording, m.codemat, m.coef
+FROM Test t
+JOIN Matter m ON t.codemat = m.codemat;
+
+-- 9. Average scores by student, ranked best to worst (1 point)
+SELECT s.name, s.firstname, ROUND(AVG(n.score),3) AS average_score
+FROM Notation n
+JOIN Student s ON n.numstud = s.numstud
+GROUP BY s.numstud, s.name, s.firstname
+ORDER BY average_score DESC;
+
+-- 10. Average scores for matters with >1 test (4 points)
+SELECT m.wording, ROUND(AVG(n.score),3) AS average_score
+FROM Notation n
+JOIN Test t ON n.numtest = t.numtest
+JOIN Matter m ON t.codemat = m.codemat
+WHERE t.codemat IN (
+    SELECT codemat FROM Test 
+    GROUP BY codemat 
+    HAVING COUNT(*) > 1
+)
+GROUP BY m.wording;
+
+-- 11. Average of scores in tests with <6 students (4 points)
+SELECT t.numtest, ROUND(AVG(n.score),3) AS average_score
+FROM Notation n
+JOIN Test t ON n.numtest = t.numtest
+WHERE t.numtest IN (
+    SELECT numtest 
+    FROM Notation 
+    GROUP BY numtest 
+    HAVING COUNT(*) < 6
+)
+GROUP BY t.numtest;
