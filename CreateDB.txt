@@ -1,0 +1,37 @@
+DROP DATABASE IF EXISTS StudentTestDB;
+CREATE DATABASE StudentTestDB;
+
+USE StudentTestDB;
+
+CREATE TABLE Student (
+    numstud INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+	firstname VARCHAR(255) NOT NULL,
+	dateofbirth DATE NOT NULL,
+    street VARCHAR(255) NOT NULL,
+    postalcod VARCHAR(255) NOT NULL,
+    city VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Matter (
+    codemat VARCHAR(255) PRIMARY KEY,
+    wording VARCHAR(255) NOT NULL,
+	coef FLOAT NOT NULL
+);
+
+CREATE TABLE Test (
+    numtest INT PRIMARY KEY,
+    testdate DATE NOT NULL,
+	place VARCHAR(255) NOT NULL,
+    codemat VARCHAR(255),
+    FOREIGN KEY (codemat) REFERENCES Matter(codemat)
+);
+
+CREATE TABLE Notation (
+    numstud INT NOT NULL,
+    numtest INT NOT NULL,
+	score FLOAT NOT NULL,
+    PRIMARY KEY (numstud, numtest),
+    FOREIGN KEY (numstud) REFERENCES Student(numstud),
+    FOREIGN KEY (numtest) REFERENCES Test(numtest)
+);
